@@ -17,22 +17,26 @@ $router->group(['prefix' => 'api', 'namespace' => 'Api'], function () use ($rout
     $router->post('login', 'AuthController@login');
 
     // Получение списка всех категорий
-    $router->get('products', 'ProductController@index');
+    $router->get('categories', 'CategoryController@index');
 
     // Получение списка товаров в конкретной категории
     $router->get('categories/{categoryId}/products', 'CategoryController@products');
 
     // Добавление/Редактирование/Удаление категории (для авторизованных пользователей)
-    $router->put('categories/{categoryId}', 'CategoryController@create');
+    $router->put('categories', 'CategoryController@create');
     $router->post('categories/{categoryId}', 'CategoryController@edit');
     $router->delete('categories/{categoryId}', 'CategoryController@delete');
 
     // Добавление/Редактирование/Удаление товара (для авторизованных пользователей)
-    $router->put('products/{productId}', 'ProductController@create');
+    $router->put('products', 'ProductController@create');
     $router->post('products/{productId}', 'ProductController@edit');
     $router->delete('products/{productId}', 'ProductController@delete');
 
     // Добавить фильтры к товарам (цвет, вес, цена и тд), и реализовать метод получение товара по фильтру
+    $router->post('products/{productId}/add-value', 'ProductController@addValue');
+    $router->get('products', 'ProductController@index');
     // Добавить сущность тэгов к товарам и категориям, написать методы для вывода тэгов по товарам и категориям
+    // TODO
     // Добавить роли (админ, модератор, пользователь) и на все методы с операциями добавление/редактирование/удаление поставить валидацию ролей админа и модератора
+    // TODO
 });

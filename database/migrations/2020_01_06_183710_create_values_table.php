@@ -16,6 +16,9 @@ class CreateValuesTable extends Migration
         Schema::create('values', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('name');
+            $table->string('slug')->nullable();
+            $table->unsignedBigInteger('filter_id')->index();
+            $table->foreign('filter_id')->references('id')->on('filters')->onDelete('cascade');
             $table->timestamps();
         });
     }

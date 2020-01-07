@@ -4,42 +4,84 @@ namespace App\Http\Controllers\Api;
 
 use Illuminate\Support\Facades\Auth;
 use App\User;
+use App\Product;
+use App\Http\Resources\ProductResource;
+use Illuminate\Http\Request;
+use App\Filters\ProductFilter;
 
 class ProductController extends Controller
 {
+    protected $product;
      /**
      * Instantiate a new ProductController instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(Product $product)
     {
         $this->middleware('auth');
+        $this->product = $product;
     }
 
-    public function index()
+    public function index(ProductFilter $filters)
     {
-        return 1;
+        try {
+            return response()->json([
+                'data' => ProductResource::collection($this->product->query()->filter($filters)->get()),
+            ]);
+        } catch (\Exception $e) {
+            return $this->sendError($e->getMessage(), $e->getCode());
+        }
     }
 
-    public function addValue($productId)
+    public function addValue($productId, Request $request)
     {
-        //
-        return 1;
+        try {
+            $product = $this->product->whereId($productId)->firstOrFail();
+            $product->values()->sync($request->get('values'));
+            return $this->sendSuccess('Продукт обновлен.');            
+        } catch (\Exception $e) {
+            return $this->sendError($e->getMessage(), $e->getCode());
+        }
     }
 
-    public function create()
+    public function store(Request $request)
     {
-        return 1;
+        try {
+            $data = $request->only(['name']);
+            $product = $this->product->create($data);
+            return response()->json([
+                'data' => (new ProductResource($product)),
+                'message' => 'Продукт создан.'
+            ]);
+        } catch (\Exception $e) {
+            return $this->sendError($e->getMessage(), $e->getCode());
+        }
     }
 
-    public function edit($productId)
+    public function edit($productId, Request $request)
     {
-        return 1;
+        try {
+            $data = $request->only(['name']);
+            $product = $this->product->whereId($productId)->firstOrFail();
+            $product->update($data);
+            return response()->json([
+                'data' => (new ProductResource($product)),
+                'message' => 'Продукт изменен.'
+            ]);
+        } catch (\Exception $e) {
+            return $this->sendError($e->getMessage(), $e->getCode());
+        }
     }
 
-    public function delete($productId)
+    public function destroy($productId)
     {
-        return 1;
+        try {
+            $product = $this->product->whereId($productId)->firstOrFail();
+            $product->delete();
+            return $this->sendSuccess('Продукт удален.');
+        } catch (\Exception $e) {
+            return $this->sendError($e->getMessage(), $e->getCode());
+        }
     }
 }

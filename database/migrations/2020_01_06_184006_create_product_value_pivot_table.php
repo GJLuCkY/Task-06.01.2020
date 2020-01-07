@@ -15,9 +15,9 @@ class CreateProductValuePivotTable extends Migration
     {
         Schema::create('product_value', function (Blueprint $table) {
             $table->unsignedBigInteger('product_id')->index();
-            $table->foreign('product_id')->references('id')->on('products');
+            $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
             $table->unsignedBigInteger('value_id')->index();
-            $table->foreign('value_id')->references('id')->on('values');
+            $table->foreign('value_id')->references('id')->on('values')->onDelete('cascade');
             $table->primary(['product_id', 'value_id']);
         });
     }

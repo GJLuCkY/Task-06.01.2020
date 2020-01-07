@@ -15,4 +15,19 @@ class Controller extends BaseController
             'expires_in' => Auth::factory()->getTTL() * 60
         ], 200);
     }
+
+    protected function sendError($message = '', $error = 500)
+    {
+        return response()->json([
+            'message' => $message,
+            'code' => $error
+        ], 500);
+    }
+
+    protected function sendSuccess($message = '')
+    {
+        return response()->json([
+            'message' => $message
+        ], 200);
+    }
 }

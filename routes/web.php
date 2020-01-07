@@ -19,24 +19,24 @@ $router->group(['prefix' => 'api', 'namespace' => 'Api'], function () use ($rout
     // Получение списка всех категорий
     $router->get('categories', 'CategoryController@index');
 
-    // Получение списка товаров в конкретной категории
-    $router->get('categories/{categoryId}/products', 'CategoryController@products');
-
     // Добавление/Редактирование/Удаление категории (для авторизованных пользователей)
-    $router->put('categories', 'CategoryController@create');
-    $router->post('categories/{categoryId}', 'CategoryController@edit');
-    $router->delete('categories/{categoryId}', 'CategoryController@delete');
+    $router->post('categories', 'CategoryController@store');
+    $router->put('categories/{categoryId}', 'CategoryController@edit');
+    $router->delete('categories/{categoryId}', 'CategoryController@destroy');
+
+    // Получение списка товаров в конкретной категории
+    $router->get('categories/{categoryId}', 'CategoryController@show');
 
     // Добавление/Редактирование/Удаление товара (для авторизованных пользователей)
-    $router->put('products', 'ProductController@create');
-    $router->post('products/{productId}', 'ProductController@edit');
-    $router->delete('products/{productId}', 'ProductController@delete');
+    $router->post('products', 'ProductController@store');
+    $router->put('products/{productId}', 'ProductController@edit');
+    $router->delete('products/{productId}', 'ProductController@destroy');
 
     // Добавить фильтры к товарам (цвет, вес, цена и тд), и реализовать метод получение товара по фильтру
-    $router->post('products/{productId}/add-value', 'ProductController@addValue');
+    $router->post('products/{productId}/add_value', 'ProductController@addValue');
     $router->get('products', 'ProductController@index');
     // Добавить сущность тэгов к товарам и категориям, написать методы для вывода тэгов по товарам и категориям
-    // TODO
+    $router->get('tags', 'TagController@index');
     // Добавить роли (админ, модератор, пользователь) и на все методы с операциями добавление/редактирование/удаление поставить валидацию ролей админа и модератора
     // TODO
 });

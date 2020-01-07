@@ -23,6 +23,8 @@ class TagController extends Controller
 
     public function index(Request $request)
     {
+
+        
         try {
             $tagName = $request->get('search');
             return response()->json([

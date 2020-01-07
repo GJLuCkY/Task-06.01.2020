@@ -56,6 +56,9 @@ $app->singleton(
 | route or middleware that'll be assigned to some specific routes.
 |
 */
+$app->configure('permission');
+$app->alias('cache', \Illuminate\Cache\CacheManager::class);  // if you don't have this already
+$app->register(Spatie\Permission\PermissionServiceProvider::class);
 
 // $app->middleware([
 //     App\Http\Middleware\ExampleMiddleware::class
@@ -63,6 +66,8 @@ $app->singleton(
 
 $app->routeMiddleware([
     'auth' => App\Http\Middleware\Authenticate::class,
+    'permission' => Spatie\Permission\Middlewares\PermissionMiddleware::class,
+    'role'       => Spatie\Permission\Middlewares\RoleMiddleware::class,
 ]);
 
 /*

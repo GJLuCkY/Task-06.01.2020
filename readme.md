@@ -1,3 +1,3 @@
-# Ссылка на Postman
+# Postman (collections)
 
 https://www.getpostman.com/collections/40fc7d9a546003737aba

@@ -8,6 +8,7 @@ use App\Category;
 use App\Http\Resources\CategoryResource;
 use App\Http\Resources\ProductResource;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 
 class CategoryController extends Controller
 {
@@ -48,12 +49,21 @@ class CategoryController extends Controller
     public function store(Request $request)
     {
         try {
+            $validator = \Validator::make($request->all(), [
+                'name' => 'required'
+            ]);
+
+            if ($validator->fails()) {
+                throw new ValidationException($validator);
+            }
             $data = $request->only(['name']);
             $category = $this->category->create($data);
             return response()->json([
                 'data' => (new CategoryResource($category)),
                 'message' => 'Категория создана.'
             ]);
+        } catch (ValidationException $e) {
+            return $this->sendValidatorError($e->validator->errors());
         } catch (\Exception $e) {
             return $this->sendError($e->getMessage(), $e->getCode());
         }
@@ -62,6 +72,13 @@ class CategoryController extends Controller
     public function edit($categoryId, Request $request)
     {
         try {
+            $validator = \Validator::make($request->all(), [
+                'name' => 'required'
+            ]);
+
+            if ($validator->fails()) {
+                throw new ValidationException($validator);
+            }
             $data = $request->only(['name']);
             $category = $this->category->whereId($categoryId)->firstOrFail();
             $category->update($data);
@@ -69,6 +86,8 @@ class CategoryController extends Controller
                 'data' => (new CategoryResource($category)),
                 'message' => 'Категория изменена.'
             ]);
+        } catch (ValidationException $e) {
+            return $this->sendValidatorError($e->validator->errors());
         } catch (\Exception $e) {
             return $this->sendError($e->getMessage(), $e->getCode());
         }

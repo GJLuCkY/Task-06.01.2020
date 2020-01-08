@@ -30,4 +30,14 @@ class Controller extends BaseController
             'message' => $message
         ], 200);
     }
+
+    protected function sendValidatorError($errors)
+    {
+        $result = [
+            'message' => 'Валидационная ошибка',
+            'errors'  => $errors,
+        ];
+
+        return response()->json($result, 422);
+    }
 }

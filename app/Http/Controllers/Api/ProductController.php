@@ -8,6 +8,7 @@ use App\Product;
 use App\Http\Resources\ProductResource;
 use Illuminate\Http\Request;
 use App\Filters\ProductFilter;
+use Illuminate\Validation\ValidationException;
 
 class ProductController extends Controller
 {
@@ -39,7 +40,7 @@ class ProductController extends Controller
         try {
             $product = $this->product->whereId($productId)->firstOrFail();
             $product->values()->sync($request->get('values'));
-            return $this->sendSuccess('Продукт обновлен.');            
+            return $this->sendSuccess('Продукт обновлен.');
         } catch (\Exception $e) {
             return $this->sendError($e->getMessage(), $e->getCode());
         }
@@ -48,12 +49,21 @@ class ProductController extends Controller
     public function store(Request $request)
     {
         try {
+            $validator = \Validator::make($request->all(), [
+                'name' => 'required'
+            ]);
+
+            if ($validator->fails()) {
+                throw new ValidationException($validator);
+            }
             $data = $request->only(['name']);
             $product = $this->product->create($data);
             return response()->json([
                 'data' => (new ProductResource($product)),
                 'message' => 'Продукт создан.'
             ]);
+        } catch (ValidationException $e) {
+            return $this->sendValidatorError($e->validator->errors());
         } catch (\Exception $e) {
             return $this->sendError($e->getMessage(), $e->getCode());
         }
@@ -62,6 +72,13 @@ class ProductController extends Controller
     public function edit($productId, Request $request)
     {
         try {
+            $validator = \Validator::make($request->all(), [
+                'name' => 'required'
+            ]);
+
+            if ($validator->fails()) {
+                throw new ValidationException($validator);
+            }
             $data = $request->only(['name']);
             $product = $this->product->whereId($productId)->firstOrFail();
             $product->update($data);
@@ -69,6 +86,8 @@ class ProductController extends Controller
                 'data' => (new ProductResource($product)),
                 'message' => 'Продукт изменен.'
             ]);
+        } catch (ValidationException $e) {
+            return $this->sendValidatorError($e->validator->errors());
         } catch (\Exception $e) {
             return $this->sendError($e->getMessage(), $e->getCode());
         }

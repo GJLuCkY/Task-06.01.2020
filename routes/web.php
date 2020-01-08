@@ -11,31 +11,11 @@
 |
 */
 
-use Spatie\Permission\Models\Role;
-use Spatie\Permission\Models\Permission;
-
-$router->get('salam', function () {
-    // По хорошему нужны сиды
-    // $user = \App\User::first();
-    // $user->assignRole('admin');
-    // $roles = $user->roles()->pluck('name');
-    // $role = Role::create(['name' => 'admin', 'guard_name' => 'web']);
-    // $role = Role::create(['name' => 'moderator', 'guard_name' => 'web']);
-    // $role = Role::create(['name' => 'user', 'guard_name' => 'web']);
-    // $permission = Permission::create(['name' => 'categories-edit']);
-    // $permission = Permission::create(['name' => 'categories-create']);
-    // $permission = Permission::create(['name' => 'categories-delete']);
-    // $permission = Permission::create(['name' => 'products-edit']);
-    // $permission = Permission::create(['name' => 'products-create']);
-    // $permission = Permission::create(['name' => 'products-delete']);
-});
-
-
 $router->group(['prefix' => 'api', 'namespace' => 'Api'], function () use ($router) {
     // Авторизация пользователей
     $router->post('register', 'AuthController@register');
     $router->post('login', 'AuthController@login');
-    
+
     // Добавить роли (админ, модератор, пользователь) и на все методы с операциями добавление/редактирование/удаление поставить валидацию ролей админа и модератора
     $router->group(['middleware' => ['role:admin|moderator']], function () use ($router) {
         // Добавление/Редактирование/Удаление категории (для авторизованных пользователей)
